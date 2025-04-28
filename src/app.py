@@ -1,5 +1,14 @@
 """
-Para este proyecto se utilizaremos streamlib
+Para este proyecto se utilizaremos streamlib, par los calculos de tokens tomamos de base la libreria tiktoken, para los demas modelos los dividiremos en 4 partes:
+Ademas calcularemos el gasto energetico y de agua, y el CO2 estimado en base a la energia utilizada.
+- Contar tokens de entrada y salida para cada modelo de IA.
+- Calcular el costo de los tokens de entrada y salida para cada modelo.
+- Calcular el gasto de energía y agua para cada modelo.
+- Calcular el CO2 estimado para cada modelo.
+- Mostrar los resultados en una tabla y un gráfico de barras.
+- Permitir al usuario seleccionar los modelos de IA que desea analizar.
+- Permitir al usuario seleccionar la moneda en la que se mostrar
+
 """
 #Librerias
 import streamlit as st
@@ -67,7 +76,7 @@ st.markdown("Analiza el costo de los ttokens , elgasto energetico y de CO2 estti
 
 #Area donde el usuario puede ingresar el prompt
 
-prompt_enttrada = st.text_area("Ingresa tu prompt de entrada:", height=200)
+prompt_entrada= st.text_area("Ingresa tu prompt de entrada:", height=200)
 
 #Area donde el usuario puede ingresar el prompt de salida
 prompt_salida = st.text_area("Ingresa tu prompt de salida:(opcional )", height=200)
@@ -82,4 +91,63 @@ modelos_ia = [
     'Mistral Large', 'Codestral', 'Nemo', 'ERNIE 4.5', 'ERNIE X1',
     'Qwen-Max', 'Qwen-Plus', 'Qwen-Turbo', 'GLM-4-Plus', 'GLM-4-Long', 'GLM-4-AirX'
 ]
+
+#widget para seleccionar el modelo de IA
+
+modelos_seleccionados = st.multiselect("Selecciona los modelos de IA que deseas analizar:", modelos_ia, default=["GPT-4"])
+
+#Widget para seleccionar la moneda ,('USD', 'EUR')
+
+moneda_seleccionada = st.selectbox("Selecciona la moneda:", ['USD', 'EUR'])
+
+#------------------------------------------------------------------------------------------------------------------------------------
+#realizamos los calculos  cuando el usuario a seleccionado los modelos de IA
+
+if modelos_seleccionados:
+    st.subheader("Resultados del Análisis")
+    resultados = []
+    for modelo in modelos_seleccionados:
+        tokens_entrada=0
+        tokens_salida =0
+        costo_entrada = 0
+        costo_salida = 0
+        costo_total = 0
+        gastto_electricidad = 0
+        gasto_agua = 0
+        gasto_CO2 = 0
+        # Contamos los tokens de entrada y salida segun el modelo seleccionado
+        if "gpt-4" in modelo.lower() :
+            tokens_entrada = contar_tokens_openai(prompt_entrada,modelo)
+        else:
+            tokens_entrada = len(salida_generada.split()) /4 if salida_generada else 0
+
+#Calculamos los costos de entrada y salida segun el modelo seleccionado
+    if modelo in precios_modelos:
+        tarifa_entrada = precios_modelos[modelo].get("entrada", 0)
+        tarifa_salida = precios_modelos[modelo].get("salida", 0)
+
+        costo_entrada =(tokens_entrada / 1000) * tarifa_entrada
+        costo_salida = (tokens_salida / 1000) * tarifa_salida
+        costo_total = costo_entrada + costo_salida
+        
+        total_tokens = tokens_entrada + tokens_salida
+        gasto_electricidad, gasto_agua, gasto_CO2 = estimar_gasto_energetico(modelo, total_tokens)
+
+        #Guardamos los resulttados que los mostraremos en la tabla y el grafico
+        resultados.append({
+            "modelo": modelo,
+            "tokens_entrada": tokens_entrada if tokens_entrada is not None else "No disponible",
+            f"Costo entrada ({moneda_seleccionada})": f"{costo_entrada:.6f}",
+            f"Costo salida ({moneda_seleccionada})": f"{costo_salida:.6f}",
+            f"Costo total ({moneda_seleccionada})": f"{costo_total:.6f}",
+            "Electricidad (kWh)": f"{gasto_electricidad:.4f}",
+            "Agua (litros)": f"{gasto_agua:.4f}",
+            "CO2 (kg)": f"{gasto_CO2:.4f}",
+        })
+
+        #Mostramos los resultados en una tabla
+
+        
+
+
 

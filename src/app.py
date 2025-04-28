@@ -58,3 +58,28 @@ def estimar_gasto_energetico(modelo, total_tokens):
     co2_estimado = electricidad * INTENSIDAD_CARBONO_PROMEDIO
     return electricidad, agua, co2_estimado
 
+# Tittulo de la aplicacion en streamlit
+
+st.title("Calculadora de Costos y Tokens de Modelos de IA")
+st.markdown("Analiza el costo de los ttokens , elgasto energetico y de CO2 esttimado de los modelos de IA.")
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+#Area donde el usuario puede ingresar el prompt
+
+prompt_enttrada = st.text_area("Ingresa tu prompt de entrada:", height=200)
+
+#Area donde el usuario puede ingresar el prompt de salida
+prompt_salida = st.text_area("Ingresa tu prompt de salida:(opcional )", height=200)
+
+#------------------------------------------------------------------------------------------------------------------------------------
+
+# Lista de todos los modelos de IA que podemos analizar. ¡Nuestras opciones!
+modelos_ia = [
+    'GPT-4', 'GPT-4o', 'GPT-4o-mini', 'Claude 3 Opus', 'Claude 3 Sonnet', 'Claude 3 Haiku',
+    'Gemini 2.5 Pro Preview', 'Gemini 1.5 Flash', 'Gemini 2.0 Flash-Lite',
+    'Llama 3.1 405B', 'Llama 3.3 70B', 'Llama 3.1 8B',
+    'Mistral Large', 'Codestral', 'Nemo', 'ERNIE 4.5', 'ERNIE X1',
+    'Qwen-Max', 'Qwen-Plus', 'Qwen-Turbo', 'GLM-4-Plus', 'GLM-4-Long', 'GLM-4-AirX'
+]
+

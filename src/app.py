@@ -147,7 +147,105 @@ if modelos_seleccionados:
 
         #Mostramos los resultados en una tabla
 
+        if resultados:
+            df_resultados = pd.DataFrame(resultados)
+            st.dataframe(df_resultados)
         
+        #Mostramos los resultados en un grafico de barras
+
+        #Grafico de costos total por modelo
+
+        fig_costos = px.bar(df_resultados, x="Modelo", y="Costo total"({moneda_seleccionada}), title="Costo Total por Modelo de IA")
+        st.plotly_chart(fig_costos, use_container_width=True)
+
+        #Grafico de tokens de entrada y salida por modelo
+
+        df_tokens = df_resultados[["Modelo", "Tokens de entrada", "Tokens de salida"] melt(id_vars=["Modelo"], var_name="Tipo de token " , value_name="Cantidad")
+        
+        fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
+        st.plotly_chart(fig_tokens, use_container_width=True)
+
+        #Grafico de gasto energetico por modelo (electricidad, agua y CO2)
+
+        df_energia = df_resultados[["Modelo", "Electricidad (kWh)", "Agua (litros)", "CO2 (kg)"]].melt(id_vars=["Modelo"], var_name="Tipo de gasto", value_name="Cantidad")
+        fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
+        st.splotly_chart(fig_energia, use_container_width=True)
+
+        else:
+        st.warning(Seleciona almenos un modelo de IA para analizar los resultados.")
+                   
+#------------------------------------------------------------------------------------------------------------------------------------
+#Barra latteral para la documentacion de la aplicacion
+
+with st.sidebar:
+    st.header("Documentación")
+    documento_seleccionado=st.selectbox("Seleccione un documento:" ,[
+        "Supuesto de Gastos Energeticos",
+        "Fuente de Datos de Precios",
+        "Limitaciones de la Esttimacion"
+    ])
+
+    st.subheader("documento seleccionado:")
+    if documento_seleccionado == "Supuestos de Gasto Energético":
+        st.markdown(
+            """
+            Este documento detalla los supuestos utilizados para estimar el gasto energético
+            (electricidad y agua) asociado al uso de diferentes modelos de lenguaje de IA.
+            Ten en cuenta que estos son **estimaciones aproximadas**.
+
+            **Metodología General:**
+            La estimación se basa en la categorización de los modelos en tres grupos generales
+            (grande, mediano, pequeño/eficiente) y la asignación de un consumo energético
+            promedio por cada 1000 tokens procesados.
+
+            **Categorías de Modelos y Supuestos:**
+            (Aquí iría el contenido de tu archivo `supuestos_energia.md`)
+            """
+        )
+       
+        try:
+            with open("docs/supuestos_energia.md", "r") as f:
+                st.markdown(f.read())
+        except FileNotFoundError:
+            st.warning("El archivo de supuestos de energía no se encontró.")
+
+    elif documento_seleccionado == "Fuentes de Datos de Precios":
+        st.markdown(
+            """
+            Los precios de los tokens utilizados en esta calculadora se basan en la información
+            disponible públicamente en las páginas de precios de los proveedores de los modelos de IA
+            (OpenAI, Anthropic, Google, etc.) a la fecha de la última actualización del software.
+
+            **Fuentes Principales:**
+            - OpenAI: [https://openai.com/pricing](https://openai.com/pricing)
+            - Anthropic: [https://www.anthropic.com/pricing](https://www.anthropic.com/pricing)
+            - Google AI: [https://ai.google.dev/pricing](https://ai.google.dev/pricing)
+            - Otros proveedores (precios consultados en sus sitios web oficiales).
+
+            **Fecha de la última actualización de precios:** 2024-XX-XX (Reemplazar con la fecha real)
+
+            Ten en cuenta que los precios pueden cambiar, por lo que siempre es recomendable
+            verificar las fuentes oficiales para obtener la información más reciente.
+            """
+        )
+    elif documento_seleccionado == "Limitaciones de la Estimación":
+        st.markdown(
+            """
+            Es importante entender que los cálculos proporcionados por esta calculadora son **estimaciones**
+            y tienen varias limitaciones:
+
+            - **Tokenización aproximada:** Para modelos que no son de OpenAI, la tokenización se realiza
+              de forma aproximada dividiendo el número de palabras por 4. Esto puede no ser preciso.
+            - **Supuestos de gasto energético:** El gasto energético es una estimación basada en categorías
+              generales de modelos y promedios. El consumo real puede variar significativamente.
+            - **Estimación de CO2:** La estimación de las emisiones de CO2 se basa en un promedio global
+              de intensidad de carbono. La huella real puede variar mucho según la fuente de energía.
+            - **Precios variables:** Los precios de los tokens pueden cambiar sin previo aviso.
+            - **Infraestructura no considerada:** No se tiene en cuenta el costo de la infraestructura
+              subyacente (servidores, refrigeración, etc.) para el
+
+
+                                 
 
 
 

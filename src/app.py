@@ -171,7 +171,7 @@ if modelos_seleccionados:
         fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
         st.splotly_chart(fig_energia, use_container_width=True)
 
-        else:
+    else:
         st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
                    
 #------------------------------------------------------------------------------------------------------------------------------------

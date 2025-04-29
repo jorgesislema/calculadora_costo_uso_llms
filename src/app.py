@@ -152,34 +152,34 @@ if modelos_seleccionados:
                 "CO2 (kg)": f"{gasto_CO2:.4f}",
             })
 
-        #Mostramos los resultados en una tabla
+    #Mostramos los resultados en una tabla
 
-        if resultados:
-            df_resultados = pd.DataFrame(resultados)
-            st.dataframe(df_resultados)
+    if resultados:
+        df_resultados = pd.DataFrame(resultados)
+        st.dataframe(df_resultados)
 
-            #Mostramos los resultados en un grafico de barras
+        #Mostramos los resultados en un grafico de barras
 
-            #Grafico de costos total por modelo
+        #Grafico de costos total por modelo
 
-            fig_costos = px.bar(df_resultados, x="Modelo", y=f"Costo total ({moneda_seleccionada})", title=f"Costo Total por Modelo de IA ({moneda_seleccionada})")
-            st.plotly_chart(fig_costos, use_container_width=True)
+        fig_costos = px.bar(df_resultados, x="Modelo", y=f"Costo total ({moneda_seleccionada})", title=f"Costo Total por Modelo de IA ({moneda_seleccionada})")
+        st.plotly_chart(fig_costos, use_container_width=True)
 
-            #Grafico de tokens de entrada y salida por modelo
+        #Grafico de tokens de entrada y salida por modelo
 
-            df_tokens = df_resultados[["Modelo", "Tokens entrada", "Tokens salida"]].melt(id_vars=["Modelo"], var_name="Tipo de token" , value_name="Cantidad")
+        df_tokens = df_resultados[["Modelo", "Tokens entrada", "Tokens salida"]].melt(id_vars=["Modelo"], var_name="Tipo de token" , value_name="Cantidad")
 
-            fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
-            st.plotly_chart(fig_tokens, use_container_width=True)
+        fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
+        st.plotly_chart(fig_tokens, use_container_width=True)
 
-            #Grafico de gasto energetico por modelo (electricidad, agua y CO2)
+        #Grafico de gasto energetico por modelo (electricidad, agua y CO2)
 
-            df_energia = df_resultados[["Modelo", "Electricidad (kWh)", "Agua (litros)", "CO2 (kg)"]].melt(id_vars=["Modelo"], var_name="Tipo de gasto", value_name="Cantidad")
-            fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
-            st.plotly_chart(fig_energia, use_container_width=True)
+        df_energia = df_resultados[["Modelo", "Electricidad (kWh)", "Agua (litros)", "CO2 (kg)"]].melt(id_vars=["Modelo"], var_name="Tipo de gasto", value_name="Cantidad")
+        fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
+        st.plotly_chart(fig_energia, use_container_width=True)
 
-        else:
-            st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
+    else:
+        st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
 
 #------------------------------------------------------------------------------------------------------------------------------------
 #Barra latteral para la documentacion de la aplicacion
@@ -216,7 +216,7 @@ with st.sidebar:
         except FileNotFoundError:
             st.warning("El archivo de supuestos de energía no se encontró.")
 
-    elif documento_seleccionado == "Fuentes de Datos de Precios":
+    elif documento_seleccionado == "Fuente de Datos de Precios":
         st.markdown(
             """
             Los precios de los tokens utilizados en esta calculadora se basan en la información
@@ -235,7 +235,7 @@ with st.sidebar:
             verificar las fuentes oficiales para obtener la información más reciente.
             """
         )
-    elif documento_seleccionado == "Limitaciones de la Estimación":
+    elif documento_seleccionado == "Limitaciones de la Esttimacion":
         st.markdown(
             """
             Es importante entender que los cálculos proporcionados por esta calculadora son **estimaciones**

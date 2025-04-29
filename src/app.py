@@ -242,7 +242,8 @@ with st.sidebar:
               de intensidad de carbono. La huella real puede variar mucho según la fuente de energía.
             - **Precios variables:** Los precios de los tokens pueden cambiar sin previo aviso.
             - **Infraestructura no considerada:** No se tiene en cuenta el costo de la infraestructura
-              subyacente (servidores, refrigeración, etc.) para el
+              subyacente 
+              """
 
 
                                  

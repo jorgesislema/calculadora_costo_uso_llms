@@ -1,0 +1,6 @@
+streamlit
+pandas
+tiktoken
+plotly-express
+transformers
+qwen-tokenizer

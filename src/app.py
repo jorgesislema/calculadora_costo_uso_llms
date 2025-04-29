@@ -160,7 +160,7 @@ if modelos_seleccionados:
 
         #Grafico de tokens de entrada y salida por modelo
 
-        df_tokens = df_resultados[["Modelo", "Tokens de entrada", "Tokens de salida"] melt(id_vars=["Modelo"], var_name="Tipo de token " , value_name="Cantidad")
+        df_tokens = df_resultados["Modelo", "Tokens de entrada", "Tokens de salida"] melt(id_vars=["Modelo"], var_name="Tipo de token " , value_name="Cantidad")
         
         fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
         st.plotly_chart(fig_tokens, use_container_width=True)

@@ -172,7 +172,7 @@ if modelos_seleccionados:
         st.splotly_chart(fig_energia, use_container_width=True)
 
         else:
-        st.warning(Seleciona almenos un modelo de IA para analizar los resultados.")
+        st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
                    
 #------------------------------------------------------------------------------------------------------------------------------------
 #Barra latteral para la documentacion de la aplicacion

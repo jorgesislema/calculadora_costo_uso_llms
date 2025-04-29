@@ -14,9 +14,12 @@ calculadora-costo-uso-llms/
 │   │   └── model_prices.json     # Precios de tokens y parámetros ambientales
 │   ├── analyzers/
 │   │   ├── openai_analyzer.py    # Tokenizer y costos OpenAI
+│   │   ├── alibaba_analyzer.py   # Tokenizer y costos Alibaba
+│   │   ├── anthropic_analyzer.py # Tokenizer y costos Anthropic
+│   │   ├── baidu_analyzer.py     # Tokenizer y costos Azure
 │   │   ├── google_analyzer.py    # Tokenizer y costos Google Gemini
 │   │   ├── mistral_analyzer.py   # Tokenizer y costos Mistral
-│   │   └── ...                   # Otros proveedores
+│   │   └── zhipu_analyzer.py     # Tokenizer y costos Zhipu
 │   ├── calculators/
 │   │   ├── token_costs.py        # Cálculo de costos de entrada y salida
 │   │   └── energy_estimation.py  # Estimación de gasto de energía y agua

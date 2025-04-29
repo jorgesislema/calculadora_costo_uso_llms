@@ -116,10 +116,12 @@ if modelos_seleccionados:
         gasto_agua = 0
         gasto_CO2 = 0
         # Contamos los tokens de entrada y salida segun el modelo seleccionado
-        if "gpt-4" in modelo.lower() :
-            tokens_entrada = contar_tokens_openai(prompt_entrada,modelo)
+        if "gpt-4" in modelo.lower():
+            tokens_entrada = contar_tokens_openai(prompt_entrada, modelo)
+            tokens_salida = contar_tokens_openai(prompt_salida, modelo) if prompt_salida else 0
         else:
-            tokens_entrada = len(salida_generada.split()) /4 if salida_generada else 0
+            tokens_entrada = len(prompt_entrada.split()) / 4 if prompt_entrada else 0
+            tokens_salida = len(prompt_salida.split()) / 4 if prompt_salida else 0
 
 #Calculamos los costos de entrada y salida segun el modelo seleccionado
     if modelo in precios_modelos:

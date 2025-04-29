@@ -8,15 +8,14 @@ Ademas calcularemos el gasto energetico y de agua, y el CO2 estimado en base a l
 - Mostrar los resultados en una tabla y un gráfico de barras.
 - Permitir al usuario seleccionar los modelos de IA que desea analizar.
 - Permitir al usuario seleccionar la moneda en la que se mostrar
-
 """
 #Librerias
 import streamlit as st
 import pandas as pd
-import tiktoken 
+import tiktoken
 import plotly.express as px
 
-#realizamos un dicionario con los valores de los precios de los diferentes modelos de IA del mercado
+#realizamos un diccionario con los valores de los precios de los diferentes modelos de IA del mercado
 
 precios_modelos = {
     "GPT-4": {"entrada": 0.002, "salida": 0.008},
@@ -70,7 +69,7 @@ def estimar_gasto_energetico(modelo, total_tokens):
 # Tittulo de la aplicacion en streamlit
 
 st.title("Calculadora de Costos y Tokens de Modelos de IA")
-st.markdown("Analiza el costo de los ttokens , elgasto energetico y de CO2 esttimado de los modelos de IA.")
+st.markdown("Analiza el costo de los tokens , el gasto energetico y de CO2 estimado de los modelos de IA.")
 
 #------------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,70 +111,76 @@ if modelos_seleccionados:
         costo_entrada = 0
         costo_salida = 0
         costo_total = 0
-        gastto_electricidad = 0
+        gasto_electricidad = 0
         gasto_agua = 0
         gasto_CO2 = 0
         # Contamos los tokens de entrada y salida segun el modelo seleccionado
         if "gpt-4" in modelo.lower():
-            tokens_entrada = contar_tokens_openai(prompt_entrada, modelo)
-            tokens_salida = contar_tokens_openai(prompt_salida, modelo) if prompt_salida else 0
+            try:
+                encoding = tiktoken.encoding_for_model(modelo)
+                tokens_entrada = len(encoding.encode(prompt_entrada)) if prompt_entrada else 0
+                tokens_salida = len(encoding.encode(prompt_salida)) if prompt_salida else 0
+            except KeyError:
+                tokens_entrada = len(prompt_entrada.split()) / 4 if prompt_entrada else 0
+                tokens_salida = len(prompt_salida.split()) / 4 if prompt_salida else 0
         else:
             tokens_entrada = len(prompt_entrada.split()) / 4 if prompt_entrada else 0
             tokens_salida = len(prompt_salida.split()) / 4 if prompt_salida else 0
 
-#Calculamos los costos de entrada y salida segun el modelo seleccionado
-    if modelo in precios_modelos:
-        tarifa_entrada = precios_modelos[modelo].get("entrada", 0)
-        tarifa_salida = precios_modelos[modelo].get("salida", 0)
+        #Calculamos los costos de entrada y salida segun el modelo seleccionado
+        if modelo in precios_modelos:
+            tarifa_entrada = precios_modelos[modelo].get("entrada", 0)
+            tarifa_salida = precios_modelos[modelo].get("salida", 0)
 
-        costo_entrada =(tokens_entrada / 1000) * tarifa_entrada
-        costo_salida = (tokens_salida / 1000) * tarifa_salida
-        costo_total = costo_entrada + costo_salida
-        
-        total_tokens = tokens_entrada + tokens_salida
-        gasto_electricidad, gasto_agua, gasto_CO2 = estimar_gasto_energetico(modelo, total_tokens)
+            costo_entrada =(tokens_entrada / 1000) * tarifa_entrada
+            costo_salida = (tokens_salida / 1000) * tarifa_salida
+            costo_total = costo_entrada + costo_salida
 
-        #Guardamos los resulttados que los mostraremos en la tabla y el grafico
-        resultados.append({
-            "modelo": modelo,
-            "tokens_entrada": tokens_entrada if tokens_entrada is not None else "No disponible",
-            f"Costo entrada ({moneda_seleccionada})": f"{costo_entrada:.6f}",
-            f"Costo salida ({moneda_seleccionada})": f"{costo_salida:.6f}",
-            f"Costo total ({moneda_seleccionada})": f"{costo_total:.6f}",
-            "Electricidad (kWh)": f"{gasto_electricidad:.4f}",
-            "Agua (litros)": f"{gasto_agua:.4f}",
-            "CO2 (kg)": f"{gasto_CO2:.4f}",
-        })
+            total_tokens = tokens_entrada + tokens_salida
+            gasto_electricidad, gasto_agua, gasto_CO2 = estimar_gasto_energetico(modelo, total_tokens)
+
+            #Guardamos los resulttados que los mostraremos en la tabla y el grafico
+            resultados.append({
+                "Modelo": modelo,
+                "Tokens entrada": tokens_entrada if tokens_entrada is not None else "No disponible",
+                "Tokens salida": tokens_salida if tokens_salida is not None else "No disponible",
+                f"Costo entrada ({moneda_seleccionada})": f"{costo_entrada:.6f}",
+                f"Costo salida ({moneda_seleccionada})": f"{costo_salida:.6f}",
+                f"Costo total ({moneda_seleccionada})": f"{costo_total:.6f}",
+                "Electricidad (kWh)": f"{gasto_electricidad:.4f}",
+                "Agua (litros)": f"{gasto_agua:.4f}",
+                "CO2 (kg)": f"{gasto_CO2:.4f}",
+            })
 
         #Mostramos los resultados en una tabla
 
         if resultados:
             df_resultados = pd.DataFrame(resultados)
             st.dataframe(df_resultados)
-        
-        #Mostramos los resultados en un grafico de barras
 
-        #Grafico de costos total por modelo
+            #Mostramos los resultados en un grafico de barras
 
-        fig_costos = px.bar(df_resultados, x="Modelo", y="Costo total"({moneda_seleccionada}), title="Costo Total por Modelo de IA")
-        st.plotly_chart(fig_costos, use_container_width=True)
+            #Grafico de costos total por modelo
 
-        #Grafico de tokens de entrada y salida por modelo
+            fig_costos = px.bar(df_resultados, x="Modelo", y=f"Costo total ({moneda_seleccionada})", title=f"Costo Total por Modelo de IA ({moneda_seleccionada})")
+            st.plotly_chart(fig_costos, use_container_width=True)
 
-        df_tokens = df_resultados["Modelo", "Tokens de entrada", "Tokens de salida"],melt(id_vars=["Modelo"], var_name="Tipo de token " , value_name="Cantidad")
-        
-        fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
-        st.plotly_chart(fig_tokens, use_container_width=True)
+            #Grafico de tokens de entrada y salida por modelo
 
-        #Grafico de gasto energetico por modelo (electricidad, agua y CO2)
+            df_tokens = df_resultados[["Modelo", "Tokens entrada", "Tokens salida"]].melt(id_vars=["Modelo"], var_name="Tipo de token" , value_name="Cantidad")
 
-        df_energia = df_resultados[["Modelo", "Electricidad (kWh)", "Agua (litros)", "CO2 (kg)"]].melt(id_vars=["Modelo"], var_name="Tipo de gasto", value_name="Cantidad")
-        fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
-        st.splotly_chart(fig_energia, use_container_width=True)
+            fig_tokens = px.bar(df_tokens, x="Modelo", y="Cantidad", color="Tipo de token", barmode="group", title="Tokens de entrada y salida por modelo")
+            st.plotly_chart(fig_tokens, use_container_width=True)
 
-    else:
-        st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
-                   
+            #Grafico de gasto energetico por modelo (electricidad, agua y CO2)
+
+            df_energia = df_resultados[["Modelo", "Electricidad (kWh)", "Agua (litros)", "CO2 (kg)"]].melt(id_vars=["Modelo"], var_name="Tipo de gasto", value_name="Cantidad")
+            fig_energia = px.bar(df_energia, x="Modelo", y="Cantidad", color="Tipo de gasto", barmode="group", title="Gasto energetico por modelo")
+            st.plotly_chart(fig_energia, use_container_width=True)
+
+        else:
+            st.warning("Seleciona almenos un modelo de IA para analizar los resultados.")
+
 #------------------------------------------------------------------------------------------------------------------------------------
 #Barra latteral para la documentacion de la aplicacion
 
@@ -187,7 +192,7 @@ with st.sidebar:
         "Limitaciones de la Esttimacion"
     ])
 
-    st.subheader("documento seleccionado:")
+    st.subheader(f"Documento seleccionado: {documento_seleccionado}")
     if documento_seleccionado == "Supuestos de Gasto Energético":
         st.markdown(
             """
@@ -204,7 +209,7 @@ with st.sidebar:
             (Aquí iría el contenido de tu archivo `supuestos_energia.md`)
             """
         )
-       
+
         try:
             with open("docs/supuestos_energia.md", "r") as f:
                 st.markdown(f.read())
@@ -244,11 +249,6 @@ with st.sidebar:
               de intensidad de carbono. La huella real puede variar mucho según la fuente de energía.
             - **Precios variables:** Los precios de los tokens pueden cambiar sin previo aviso.
             - **Infraestructura no considerada:** No se tiene en cuenta el costo de la infraestructura
-              subyacente 
-              """)
-
-
-                                 
-
-
-
+              subyacente
+            """
+        )

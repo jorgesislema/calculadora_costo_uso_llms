@@ -243,7 +243,7 @@ with st.sidebar:
             - **Precios variables:** Los precios de los tokens pueden cambiar sin previo aviso.
             - **Infraestructura no considerada:** No se tiene en cuenta el costo de la infraestructura
               subyacente 
-              """
+              """)
 
 
                                  

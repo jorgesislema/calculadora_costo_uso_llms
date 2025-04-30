@@ -1,4 +1,4 @@
-# 💡 Calculadora de Costo y Tokens de Modelos de IA
+# Calculadora de Costo y Tokens de Modelos de IA
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://token-analyzer.streamlit.app/)
 
